@@ -12,6 +12,8 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   bool offline = false;
   Map<String, int> stats = {'total': 0, 'watched': 0, 'saved': 0};
+  int dbCount = 0;
+  bool dbReady = false;
 
   @override
   void initState() {
@@ -22,7 +24,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _load() async {
     final s = await Store.instance.stats();
-    if (mounted) setState(() => stats = s);
+    final c = await Store.instance.episodeCount();
+    if (mounted) {
+      setState(() {
+        stats = s;
+        dbCount = c;
+        dbReady = Store.instance.ready;
+      });
+    }
   }
 
   Future<void> _open(String url) async {
@@ -110,7 +119,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 const SizedBox(height: 10),
                 Text('Version 1.0.0 · ጄይፕ',
-                    style: TextStyle(fontSize: 11.5, color: AppColors.muted.withOpacity( 0.9))),
+                    style: TextStyle(fontSize: 11.5, color: AppColors.muted.withOpacity(0.9))),
+                const SizedBox(height: 4),
+                Text(
+                  'DB ${dbReady ? "ready" : "NOT READY"} · $dbCount episodes stored',
+                  style: TextStyle(
+                      fontSize: 11,
+                      color: dbCount > 0 ? AppColors.good : AppColors.danger),
+                ),
                 const SizedBox(height: 6),
                 Text(
                   'Built for Jason Peters. Episode metadata is bundled for offline use; '

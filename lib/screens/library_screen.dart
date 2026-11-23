@@ -167,19 +167,49 @@ class _LibraryScreenState extends State<LibraryScreen> {
     );
   }
 
-  Widget _empty() => Center(
+  Widget _empty() {
+    final genuinelyEmpty = _all.isEmpty && _q.isEmpty && !_savedOnly && _cat == 'All';
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 34),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.inbox_outlined, size: 42, color: AppColors.muted.withOpacity( 0.5)),
+            Icon(
+              genuinelyEmpty ? Icons.storage_outlined : Icons.inbox_outlined,
+              size: 42,
+              color: AppColors.muted.withOpacity(0.5),
+            ),
             const SizedBox(height: 14),
-            Text(_savedOnly ? 'Nothing saved yet' : 'No episodes match',
-                style: const TextStyle(fontSize: 14, color: AppColors.muted)),
+            Text(
+              genuinelyEmpty
+                  ? 'Library could not load'
+                  : (_savedOnly ? 'Nothing saved yet' : 'No episodes match'),
+              style: const TextStyle(fontSize: 14, color: AppColors.muted),
+            ),
             const SizedBox(height: 4),
-            Geez(_savedOnly ? 'እስካሁን ምንም አልተቀመጠም' : 'ምንም አልተገኘም', size: 10),
+            Geez(
+              genuinelyEmpty
+                  ? '\u1264\u1270 \u1218\u1338\u1205\u134D\u1275'
+                  : (_savedOnly ? '\u12A5\u1235\u12AB\u1201\u1295' : '\u121D\u1295\u121D'),
+              size: 10,
+            ),
+            if (genuinelyEmpty) ...[
+              const SizedBox(height: 18),
+              OutlinedButton(
+                onPressed: _load,
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.accent,
+                  side: BorderSide(color: AppColors.accent.withOpacity(0.4)),
+                ),
+                child: const Text('Try again'),
+              ),
+            ],
           ],
         ),
-      );
+      ),
+    );
+  }
 
   Widget _card(Map<String, dynamic> e) {
     final watched = (e['watched'] as int? ?? 0) == 1;

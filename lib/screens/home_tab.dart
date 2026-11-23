@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import '../theme.dart';
 import '../services/store.dart';
@@ -37,7 +35,6 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   Future<void> _boot() async {
-    await _seed();
     final s = await Store.instance.stats();
     final list = await Store.instance.episodes();
     if (!mounted) return;
@@ -48,13 +45,6 @@ class _HomeTabState extends State<HomeTab> {
     });
   }
 
-  Future<void> _seed() async {
-    try {
-      final raw = await rootBundle.loadString('assets/data/episodes.json');
-      final data = (jsonDecode(raw) as List).cast<Map<String, dynamic>>();
-      await Store.instance.seedEpisodes(data);
-    } catch (_) {}
-  }
 
   String _fmtDur(int? sec) {
     if (sec == null) return '—';

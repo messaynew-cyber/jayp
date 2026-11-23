@@ -54,17 +54,50 @@ class Store {
     );
   }
 
-  Future<void> seedEpisodes(List<Map<String, dynamic>> rows) async {
+  /// Seeds the catalogue. Idempotent: inserts any episode whose id is not
+  /// already present, so a re-launch after a schema change (or an install
+  /// over an older build) backfills the missing rows instead of giving up
+  /// because the table is not literally empty.
+  Future<int> seedEpisodes(List<Map<String, dynamic>> rows) async {
     final d = db;
-    if (d == null) return;
-    final count = Sqflite.firstIntValue(
-        await d.rawQuery('SELECT COUNT(*) FROM episodes'));
-    if ((count ?? 0) > 0) return;
-    final batch = d.batch();
+    if (d == null) return 0;
+    var inserted = 0;
     for (final r in rows) {
-      batch.insert('episodes', r, conflictAlgorithm: ConflictAlgorithm.replace);
+      try {
+        final existing = await d.query('episodes',
+            columns: ['id'], where: 'id = ?', whereArgs: [r['id']]);
+        if (existing.isNotEmpty) continue;
+        await d.insert('episodes', r, conflictAlgorithm: ConflictAlgorithm.replace);
+        inserted++;
+      } catch (_) {
+        // Never let one bad row poison the whole seed.
+      }
     }
-    await batch.commit(noResult: true);
+    return inserted;
+  }
+
+  Future<int> episodeCount() async {
+    final d = db;
+    if (d == null) return 0;
+    return Sqflite.firstIntValue(
+            await d.rawQuery('SELECT COUNT(*) FROM episodes')) ??
+        0;
+  }
+
+  /// Last-resort repair: wipe and re-seed. Used if the table is empty even
+  /// after a seed attempt (corrupt DB from an interrupted write).
+  Future<int> reseedEpisodes(List<Map<String, dynamic>> rows) async {
+    final d = db;
+    if (d == null) return 0;
+    await d.delete('episodes');
+    var n = 0;
+    for (final r in rows) {
+      try {
+        await d.insert('episodes', r, conflictAlgorithm: ConflictAlgorithm.replace);
+        n++;
+      } catch (_) {}
+    }
+    return n;
   }
 
   Future<bool> toggleSaved(String id) async {
