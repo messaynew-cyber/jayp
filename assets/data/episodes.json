@@ -1,0 +1,122 @@
+[
+ {
+  "id": "ep001",
+  "title": "What ChatGPT actually is",
+  "titleAm": "ChatGPT ምንድን ነው",
+  "description": "The foundational episode. What a large language model does, what it does not do, and why the hype and the fear are both partly wrong.",
+  "published": "2023-02-14",
+  "durationSec": 1420,
+  "category": "AI",
+  "url": "https://www.youtube.com/@ethiotechj",
+  "watched": 0,
+  "saved": 0
+ },
+ {
+  "id": "ep002",
+  "title": "Generative AI in Amharic",
+  "titleAm": "ጄኔሬቲቭ AI በአማርኛ",
+  "description": "Testing how well AI tools handle Amharic — where they hold up, where they fail, and what that means for Ethiopian developers.",
+  "published": "2023-04-02",
+  "durationSec": 1650,
+  "category": "AI",
+  "url": "https://www.youtube.com/@ethiotechj",
+  "watched": 0,
+  "saved": 0
+ },
+ {
+  "id": "ep003",
+  "title": "The ETV interview",
+  "titleAm": "የኢቲቪ ቃለ መጠይቅ",
+  "description": "The national broadcast that put generative AI into mainstream Ethiopian conversation.",
+  "published": "2023-06-20",
+  "durationSec": 2100,
+  "category": "Media",
+  "url": "https://www.youtube.com/@ethiotechj",
+  "watched": 0,
+  "saved": 0
+ },
+ {
+  "id": "ep004",
+  "title": "Blockchain beyond speculation",
+  "titleAm": "ብሎክቼይን ከምስረታ በላይ",
+  "description": "What decentralised platforms are actually for when the constraints are payment rails, connectivity and trust — not yield.",
+  "published": "2024-01-18",
+  "durationSec": 1780,
+  "category": "Web3",
+  "url": "https://www.youtube.com/@ethiotechj",
+  "watched": 0,
+  "saved": 0
+ },
+ {
+  "id": "ep005",
+  "title": "TON ecosystem explained",
+  "titleAm": "የTON ስነ-ምህዳር",
+  "description": "Walking through the TON blockchain: how it works, why it was chosen for ETN, and the trade-offs.",
+  "published": "2024-03-09",
+  "durationSec": 1560,
+  "category": "Web3",
+  "url": "https://www.youtube.com/@ethiotechj",
+  "watched": 0,
+  "saved": 0
+ },
+ {
+  "id": "ep006",
+  "title": "Building for Ethiopia first",
+  "titleAm": "ለኢትዮጵያ መጀመሪያ መገንባት",
+  "description": "Why importing a product designed for Silicon Valley's constraints produces the wrong app for Addis Ababa.",
+  "published": "2024-05-27",
+  "durationSec": 1330,
+  "category": "Build",
+  "url": "https://www.youtube.com/@ethiotechj",
+  "watched": 0,
+  "saved": 0
+ },
+ {
+  "id": "ep007",
+  "title": "Esports infrastructure in Africa",
+  "titleAm": "የኢ-ስፖርት መሰረተ ልማት",
+  "description": "Ge'ez E-sport, competitive gaming, and the server problem that has held the continent back.",
+  "published": "2024-08-11",
+  "durationSec": 1490,
+  "category": "Gaming",
+  "url": "https://www.youtube.com/@ethiotechj",
+  "watched": 0,
+  "saved": 0
+ },
+ {
+  "id": "ep008",
+  "title": "AI tools for real work",
+  "titleAm": "AI መሳሪያዎች ለስራ",
+  "description": "Practical: writing, correspondence, research, and question answering — the workflows that actually save time.",
+  "published": "2024-11-03",
+  "durationSec": 1260,
+  "category": "AI",
+  "url": "https://www.youtube.com/@ethiotechj",
+  "watched": 0,
+  "saved": 0
+ },
+ {
+  "id": "ep009",
+  "title": "Ethiopian Blockchain Week 2025",
+  "titleAm": "የኢትዮጵያ ብሎክቼይን ሳምንት",
+  "description": "Panel discussion on decentralised platforms and Ethiopia's digital transformation.",
+  "published": "2025-02-19",
+  "durationSec": 2440,
+  "category": "Web3",
+  "url": "https://www.youtube.com/@ethiotechj",
+  "watched": 0,
+  "saved": 0
+ },
+ {
+  "id": "ep010",
+  "title": "Pan-Africanism and technology",
+  "titleAm": "ፓን-አፍሪካኒዝም እና ቴክኖሎጂ",
+  "description": "Who your technology is designed for is a political decision. On building from Africa, for Africa.",
+  "published": "2025-05-06",
+  "durationSec": 1610,
+  "category": "Build",
+  "url": "https://www.youtube.com/@ethiotechj",
+  "watched": 0,
+  "saved": 0
+ }
+]
