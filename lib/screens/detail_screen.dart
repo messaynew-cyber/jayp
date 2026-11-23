@@ -89,7 +89,7 @@ class _DetailScreenState extends State<DetailScreen> {
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 22),
             child: LayoutBuilder(
-              builder: (ctx, c) => Thumb(
+              builder: (ctx, c) => EpisodeThumb(
                 path: e['thumb'] as String?,
                 width: c.maxWidth,
                 height: (c.maxWidth * 9 / 16).clamp(140.0, 240.0),

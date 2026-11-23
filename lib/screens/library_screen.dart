@@ -211,7 +211,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 12),
                   child: LayoutBuilder(
-                    builder: (ctx, c) => Thumb(
+                    builder: (ctx, c) => EpisodeThumb(
                       path: e['thumb'] as String?,
                       height: (c.maxWidth * 9 / 16).clamp(90.0, 170.0),
                       width: c.maxWidth,

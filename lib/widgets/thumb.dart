@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import '../theme.dart';
 
-/// Episode thumbnail with graceful fallback when the asset is missing.
-class Thumb extends StatelessWidget {
+/// Episode thumbnail with graceful fallback.
+/// Named EpisodeThumb to avoid colliding with Flutter's Slider Thumb. when the asset is missing.
+class EpisodeThumb extends StatelessWidget {
   final String? path;
   final double? width;
   final double height;
   final double radius;
   final String? category;
-  const Thumb({
+  const EpisodeThumb({
     super.key,
     required this.path,
     this.width,

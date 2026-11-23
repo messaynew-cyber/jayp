@@ -395,7 +395,7 @@ class _EpisodeRow extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Thumb(
+            EpisodeThumb(
               path: e['thumb'] as String?,
               height: 62,
               category: e['category'] as String?,
