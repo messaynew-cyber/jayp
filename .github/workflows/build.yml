@@ -20,9 +20,6 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -43,10 +40,11 @@ jobs:
       - name: Sign APK with debug keystore
         run: |
           set -e
-          BT=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -1)
-          echo "using build-tools: $BT"
+          BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
+          echo "build-tools: $BT"
+          test -x "$BT/zipalign" || { echo "zipalign missing"; ls "$BT"; exit 1; }
+          test -x "$BT/apksigner" || { echo "apksigner missing"; ls "$BT"; exit 1; }
 
-          # Create a debug keystore if the runner does not already have one
           KS="$HOME/.android/debug.keystore"
           mkdir -p "$HOME/.android"
           if [ ! -f "$KS" ]; then
@@ -61,10 +59,8 @@ jobs:
           mkdir -p out
           cp build/app/outputs/flutter-apk/app-release.apk out/unsigned.apk
 
-          # zipalign BEFORE signing
           "$BT/zipalign" -v -p 4 out/unsigned.apk out/aligned.apk
 
-          # apksigner (v2 + v3 signing — required by modern Android)
           "$BT/apksigner" sign \
             --ks "$KS" \
             --ks-pass pass:android \
@@ -73,17 +69,11 @@ jobs:
             --v1-signing-enabled true \
             --v2-signing-enabled true \
             --v3-signing-enabled true \
-            --out out/jayp-signed.apk \
+            --out out/jayp-v1.0.apk \
             out/aligned.apk
 
-          echo "=== verify ==="
-          "$BT/apksigner" verify --verbose --print-certs out/jayp-signed.apk
-
-          ls -lh out/
-
-      - name: Rename artifact
-        run: |
-          mv out/jayp-signed.apk out/jayp-v1.0.apk
+          echo "=== signature verification ==="
+          "$BT/apksigner" verify --verbose --print-certs out/jayp-v1.0.apk
           ls -lh out/
 
       - name: Upload APK
