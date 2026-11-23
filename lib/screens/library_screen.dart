@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import '../theme.dart';
 import '../services/store.dart';
 import '../widgets/anim.dart';
+import '../widgets/thumb.dart';
 import 'detail_screen.dart';
 
 class LibraryScreen extends StatefulWidget {
@@ -12,7 +13,7 @@ class LibraryScreen extends StatefulWidget {
 }
 
 class _LibraryScreenState extends State<LibraryScreen> {
-  final _cats = ['All', 'AI', 'Web3', 'Build', 'Media', 'Gaming'];
+  final _cats = ['All', 'AI', 'Web3', 'Build', 'Markets', 'Media'];
   String _cat = 'All';
   String _q = '';
   bool _savedOnly = false;
@@ -207,6 +208,18 @@ class _LibraryScreenState extends State<LibraryScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: LayoutBuilder(
+                    builder: (ctx, c) => Thumb(
+                      path: e['thumb'] as String?,
+                      height: (c.maxWidth * 9 / 16).clamp(90.0, 170.0),
+                      width: c.maxWidth,
+                      radius: 2,
+                      category: e['category'] as String?,
+                    ),
+                  ),
+                ),
                 Row(
                   children: [
                     Text((e['category'] as String? ?? '').toUpperCase(),

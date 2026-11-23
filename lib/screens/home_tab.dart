@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../theme.dart';
 import '../services/store.dart';
 import '../widgets/anim.dart';
+import '../widgets/thumb.dart';
 import 'detail_screen.dart';
 
 class HomeTab extends StatefulWidget {
@@ -394,10 +395,16 @@ class _EpisodeRow extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Thumb(
+              path: e['thumb'] as String?,
+              height: 62,
+              category: e['category'] as String?,
+            ),
+            const SizedBox(width: 13),
             Container(
               width: 3,
               height: 46,
-              margin: const EdgeInsets.only(right: 14, top: 2),
+              margin: const EdgeInsets.only(right: 12, top: 2),
               decoration: BoxDecoration(
                 color: watched ? AppColors.accent : AppColors.muted.withOpacity(0.35),
                 borderRadius: BorderRadius.circular(2),

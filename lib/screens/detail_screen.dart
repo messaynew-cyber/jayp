@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
 import '../theme.dart';
 import '../services/store.dart';
+import '../widgets/thumb.dart';
 
 class DetailScreen extends StatefulWidget {
   final Map<String, dynamic> episode;
@@ -83,8 +84,25 @@ class _DetailScreenState extends State<DetailScreen> {
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 4, 20, 40),
+        padding: EdgeInsets.zero,
         children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 22),
+            child: LayoutBuilder(
+              builder: (ctx, c) => Thumb(
+                path: e['thumb'] as String?,
+                width: c.maxWidth,
+                height: (c.maxWidth * 9 / 16).clamp(140.0, 240.0),
+                radius: 4,
+                category: e['category'] as String?,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
           Row(
             children: [
               Text((e['category'] as String? ?? '').toUpperCase(),
@@ -181,6 +199,9 @@ class _DetailScreenState extends State<DetailScreen> {
                     style: TextStyle(fontSize: 11.5, height: 1.55, color: AppColors.muted.withOpacity( 0.9)),
                   ),
                 ),
+              ],
+            ),
+          ),
               ],
             ),
           ),
