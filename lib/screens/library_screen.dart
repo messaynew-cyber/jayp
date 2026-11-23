@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import '../theme.dart';
 import '../services/store.dart';
@@ -9,16 +11,18 @@ import 'detail_screen.dart';
 class LibraryScreen extends StatefulWidget {
   const LibraryScreen({super.key});
   @override
-  State<LibraryScreen> createState() => _LibraryScreenState();
+  State<LibraryScreen> createState() => LibraryScreenState();
 }
 
-class _LibraryScreenState extends State<LibraryScreen> {
+class LibraryScreenState extends State<LibraryScreen> {
   final _cats = ['All', 'AI', 'Web3', 'Build', 'Markets', 'Media'];
   String _cat = 'All';
   String _q = '';
   bool _savedOnly = false;
   List<Map<String, dynamic>> _all = [];
   final _search = TextEditingController();
+  bool _loading = true;
+  String? _error;
 
   @override
   void initState() {
@@ -32,10 +36,63 @@ class _LibraryScreenState extends State<LibraryScreen> {
     super.dispose();
   }
 
+  /// Loads the catalogue. The bundled asset is the source of truth so this can
+  /// never race the database seed; SQLite is then overlaid for watched/saved
+  /// state. If both fail we surface the reason instead of a blank screen.
+  Future<void> refreshFromSource() => _load();
+
   Future<void> _load() async {
-    final rows = await Store.instance.episodes(category: _cat, savedOnly: _savedOnly);
+    if (mounted) setState(() { _loading = true; _error = null; });
+
+    List<Map<String, dynamic>> rows = [];
+    try {
+      final raw = await rootBundle.loadString('assets/data/episodes.json');
+      rows = (jsonDecode(raw) as List).cast<Map<String, dynamic>>();
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _all = [];
+          _loading = false;
+          _error = 'Could not read the bundled catalogue.';
+        });
+      }
+      return;
+    }
+
+    // Overlay DB state (watched / saved) — best effort, never fatal.
+    try {
+      final dbRows = await Store.instance.episodes(category: 'All');
+      if (dbRows.isNotEmpty) {
+        final state = <String, Map<String, dynamic>>{
+          for (final r in dbRows) (r['id'] as String? ?? ''): r
+        };
+        for (var i = 0; i < rows.length; i++) {
+          final ov = state[rows[i]['id']];
+          if (ov != null) {
+            rows[i] = {
+              ...rows[i],
+              'watched': ov['watched'] ?? 0,
+              'saved': ov['saved'] ?? 0,
+            };
+          }
+        }
+      }
+    } catch (_) {}
+
+    var filtered = rows;
+    if (_cat != 'All') {
+      filtered = filtered.where((e) => e['category'] == _cat).toList();
+    }
+    if (_savedOnly) {
+      filtered = filtered.where((e) => (e['saved'] as int? ?? 0) == 1).toList();
+    }
+
     if (!mounted) return;
-    setState(() => _all = rows);
+    setState(() {
+      _all = filtered;
+      _loading = false;
+      _error = null;
+    });
   }
 
   List<Map<String, dynamic>> get _filtered {
@@ -150,22 +207,57 @@ class _LibraryScreenState extends State<LibraryScreen> {
           ),
           const SizedBox(height: 8),
           Expanded(
-            child: _filtered.isEmpty
-                ? _empty()
-                : ListView.builder(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-                    itemCount: _filtered.length,
-                    itemBuilder: (_, i) => RiseIn(
-                      key: ValueKey('${_cat}_${_q}_$i'),
-                      delay: (i < 8 ? i * 55 : 0),
-                      child: _card(_filtered[i]),
+            child: _loading
+                ? const Center(
+                    child: SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(strokeWidth: 2),
                     ),
-                  ),
+                  )
+                : (_error != null
+                    ? _errorState()
+                    : (_filtered.isEmpty
+                        ? _empty()
+                        : ListView.builder(
+                            padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                            itemCount: _filtered.length,
+                            itemBuilder: (_, i) => RiseIn(
+                              key: ValueKey('${_cat}_${_q}_$i'),
+                              delay: (i < 8 ? i * 55 : 0),
+                              child: _card(_filtered[i]),
+                            ),
+                          ))),
           ),
         ],
       ),
     );
   }
+
+  Widget _errorState() => Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 34),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.error_outline, size: 40, color: AppColors.danger),
+              const SizedBox(height: 14),
+              Text(_error!,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 13.5, color: AppColors.muted)),
+              const SizedBox(height: 16),
+              OutlinedButton(
+                onPressed: _load,
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.accent,
+                  side: BorderSide(color: AppColors.accent.withOpacity(0.4)),
+                ),
+                child: const Text('Reload'),
+              ),
+            ],
+          ),
+        ),
+      );
 
   Widget _empty() {
     final genuinelyEmpty = _all.isEmpty && _q.isEmpty && !_savedOnly && _cat == 'All';

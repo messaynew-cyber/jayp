@@ -15,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _i = 0;
+  final GlobalKey<LibraryScreenState> _libraryKey = GlobalKey<LibraryScreenState>();
 
   static const _tabs = [
     _Tab('Home', 'መነሻ', Icons.home_outlined, Icons.home),
@@ -25,11 +26,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final pages = const [
-      HomeTab(),
-      LibraryScreen(),
-      AskScreen(),
-      NetworkScreen(),
+    final pages = [
+      const HomeTab(),
+      LibraryScreen(key: _libraryKey),
+      const AskScreen(),
+      const NetworkScreen(),
     ];
     return Scaffold(
       body: IndexedStack(index: _i, children: pages),
@@ -49,7 +50,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: _NavItem(
                       tab: _tabs[k],
                       active: _i == k,
-                      onTap: () => setState(() => _i = k),
+                      onTap: () {
+                        setState(() => _i = k);
+                        // IndexedStack keeps children alive, so initState only runs
+                        // once. Refresh the Library every time it becomes visible.
+                        if (k == 1) {
+                          _libraryKey.currentState?.refreshFromSource();
+                        }
+                      },
                     ),
                   ),
                 Expanded(

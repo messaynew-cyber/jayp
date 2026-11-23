@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../theme.dart';
 import '../services/store.dart';
@@ -14,6 +16,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Map<String, int> stats = {'total': 0, 'watched': 0, 'saved': 0};
   int dbCount = 0;
   bool dbReady = false;
+  int assetCount = -1;
 
   @override
   void initState() {
@@ -25,11 +28,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _load() async {
     final s = await Store.instance.stats();
     final c = await Store.instance.episodeCount();
+    var a = -1;
+    try {
+      final raw = await rootBundle.loadString('assets/data/episodes.json');
+      a = (jsonDecode(raw) as List).length;
+    } catch (_) {
+      a = -2;
+    }
     if (mounted) {
       setState(() {
         stats = s;
         dbCount = c;
         dbReady = Store.instance.ready;
+        assetCount = a;
       });
     }
   }
@@ -122,10 +133,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     style: TextStyle(fontSize: 11.5, color: AppColors.muted.withOpacity(0.9))),
                 const SizedBox(height: 4),
                 Text(
-                  'DB ${dbReady ? "ready" : "NOT READY"} · $dbCount episodes stored',
+                  'Catalogue asset: ${assetCount >= 0 ? "$assetCount episodes" : "MISSING"}',
                   style: TextStyle(
                       fontSize: 11,
-                      color: dbCount > 0 ? AppColors.good : AppColors.danger),
+                      color: assetCount > 0 ? AppColors.good : AppColors.danger),
+                ),
+                Text(
+                  'SQLite: ${dbReady ? "ready" : "NOT READY"} · $dbCount rows',
+                  style: TextStyle(
+                      fontSize: 11,
+                      color: dbReady ? AppColors.muted : AppColors.danger),
                 ),
                 const SizedBox(height: 6),
                 Text(
