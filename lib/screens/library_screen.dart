@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../theme.dart';
 import '../services/store.dart';
+import '../widgets/anim.dart';
 import 'detail_screen.dart';
 
 class LibraryScreen extends StatefulWidget {
@@ -153,7 +154,11 @@ class _LibraryScreenState extends State<LibraryScreen> {
                 : ListView.builder(
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                     itemCount: _filtered.length,
-                    itemBuilder: (_, i) => _card(_filtered[i]),
+                    itemBuilder: (_, i) => RiseIn(
+                      key: ValueKey('${_cat}_${_q}_$i'),
+                      delay: (i < 8 ? i * 55 : 0),
+                      child: _card(_filtered[i]),
+                    ),
                   ),
           ),
         ],
@@ -186,12 +191,8 @@ class _LibraryScreenState extends State<LibraryScreen> {
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
-      child: Material(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(4),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(4),
-          onTap: () async {
+      child: Pressable(
+        onTap: () async {
             await Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => DetailScreen(episode: e)),
             );
@@ -241,7 +242,6 @@ class _LibraryScreenState extends State<LibraryScreen> {
               ],
             ),
           ),
-        ),
       ),
     );
   }

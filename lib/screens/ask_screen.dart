@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import '../theme.dart';
 import '../services/api.dart';
 import '../services/store.dart';
+import '../widgets/anim.dart';
 
 class AskScreen extends StatefulWidget {
   const AskScreen({super.key});
@@ -234,12 +235,12 @@ class _AskScreenState extends State<AskScreen> {
                 ? Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const SizedBox(
-                          width: 13,
-                          height: 13,
-                          child: CircularProgressIndicator(strokeWidth: 1.8, color: AppColors.accent)),
-                      const SizedBox(width: 10),
-                      Text('Thinking…', style: TextStyle(fontSize: 13, color: AppColors.muted.withOpacity( 0.9))),
+                      const TypingDots(),
+                      const SizedBox(width: 11),
+                      Text('Thinking…',
+                          style: TextStyle(
+                              fontSize: 12.5,
+                              color: AppColors.muted.withOpacity(0.9))),
                     ],
                   )
                 : Column(

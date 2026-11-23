@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme.dart';
 import '../services/api.dart';
+import '../widgets/anim.dart';
 
 class NetworkScreen extends StatefulWidget {
   const NetworkScreen({super.key});
@@ -85,9 +86,9 @@ class _NetworkScreenState extends State<NetworkScreen> {
             else if (error != null)
               _errorCard()
             else ...[
-              _priceCard(up),
+              RiseIn(child: _priceCard(up)),
               const SizedBox(height: 14),
-              if (_history.length > 1) _sparkline(),
+              if (_history.length > 1) RiseIn(delay: 90, child: _sparkline()),
               const SizedBox(height: 22),
               const Eyebrow('The ventures'),
               const SizedBox(height: 12),
@@ -209,9 +210,6 @@ class _NetworkScreenState extends State<NetworkScreen> {
   }
 
   Widget _sparkline() {
-    final lo = _history.reduce((a, b) => a < b ? a : b);
-    final hi = _history.reduce((a, b) => a > b ? a : b);
-    final span = (hi - lo) == 0 ? 1.0 : (hi - lo);
     return Container(
       height: 90,
       padding: const EdgeInsets.fromLTRB(12, 16, 12, 12),
@@ -220,25 +218,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
         borderRadius: BorderRadius.circular(4),
         border: Border.all(color: const Color(0x1AFFFFFF)),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          for (final v in _history)
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 1.5),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 220),
-                  height: 8 + ((v - lo) / span) * 48,
-                  decoration: BoxDecoration(
-                    color: AppColors.accent.withOpacity(0.45),
-                    borderRadius: BorderRadius.circular(1),
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
+      child: AnimatedBars(values: _history),
     );
   }
 
